@@ -20,6 +20,7 @@ const IMG_TECH_4 = './Tech_4.jpg';
 let currentLanguage = 'zh'; // Default to Chinese
 let currentUser = 'guest'; // 'guest' or 'alice'
 let isProcessingPayment = false; // Flag to prevent navigation during payment completion
+let latestPaymentAmount = 0; // Track the latest payment amount for guest users
 let selectedItems = {
     NEEDS: [],
     LIVES: []
@@ -132,14 +133,16 @@ function updateMemberGreeting() {
 // Page Navigation
 function showPage(pageId) {
     // Prevent navigation while processing payment completion
-    if (isProcessingPayment && pageId !== 'donation-page') {
+    /*if (isProcessingPayment && pageId !== 'donation-page') {
         console.log('Navigation blocked during payment completion');
         return;
-    }
+    }*/
+    console.log(`Navigating to page: ${pageId}`);
     
     // Add fade out effect to current page
     const currentPage = document.querySelector('.page.active');
     if (currentPage) {
+        console.log(`Fading out current page: ${currentPage.id}`);
         currentPage.style.opacity = '0';
         
         // Wait for fade out, then switch pages
@@ -162,6 +165,7 @@ function showPage(pageId) {
             
         }, 200);
     } else {
+        console.log(`First page load: ${currentPage.id}`);
         // First page load - no transition
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
@@ -172,14 +176,18 @@ function showPage(pageId) {
     // Handle special page logic
     if (pageId === 'donation-page') {
         updateDonationSummary();
-        // Reset donation page sections to initial state
+        // Always show thank-you box when navigating to donation page
+        // Only hide completion box if we're not coming from a completed payment
         const thankYouBox = document.querySelector('.thank-you-box');
         const completeBox = document.getElementById('donation-complete');
         if (thankYouBox) {
             thankYouBox.style.display = 'block';
+            console.log(`Navigating to donation page: thankyou box block`);
         }
-        if (completeBox) {
+        // Only hide completion box if payment isn't being processed
+        if (completeBox && !isProcessingPayment) {
             completeBox.style.display = 'none';
+            console.log(`Navigating to donation page: complete box none`);
         }
     } else if (pageId === 'about-page') {
         updateAboutPageStats();
@@ -431,7 +439,8 @@ function updateDonationSummary() {
 }
 
 // Payment Modal
-function openPaymentModal() {
+function openPaymentModal(event) {
+    if (event) event.preventDefault(); // Prevent form submission    
     const total = parseInt(document.getElementById('donation-total').textContent.replace(/,/g, ''));
     if (total === 0) {
         alert(currentLanguage === 'en' ? 
@@ -440,36 +449,76 @@ function openPaymentModal() {
         return;
     }
     
-    document.getElementById('payment-amount').textContent = total.toLocaleString();
-    openModal('payment-modal');
+    // Show connecting status
+    showStatusModal(
+        currentLanguage === 'en' ? 'Connecting to STRIPE...' : '正在連接 STRIPE...'
+    );
+    
+    // Simulate connection delay
+    setTimeout(() => {
+        closeModal('status-modal');
+        document.getElementById('payment-amount').textContent = total.toLocaleString();
+        openModal('payment-modal');
+    }, 2000);
+}
+
+function showStatusModal(message) {
+    const statusMessage = document.getElementById('status-message');
+    statusMessage.textContent = message;
+    statusMessage.setAttribute('data-en', message);
+    statusMessage.setAttribute('data-zh', message);
+    openModal('status-modal');
 }
 
 function processPayment() {
+    console.log('processPayment() started');
+    
+    // Show payment processing status
+    closeModal('payment-modal');
+    showStatusModal(
+        currentLanguage === 'en' ? 'Payment in process...' : '付款處理中...'
+    );
+    
+    // Simulate payment processing delay
+    setTimeout(() => {
+        closeModal('status-modal');
+        completePayment();
+    }, 2000);
+}
+
+function completePayment() {
+    console.log('completePayment() started');
+    
     // Set processing flag to prevent navigation
     isProcessingPayment = true;
-    
-    // Simulate payment processing
+    console.log('isProcessingPayment set to true');
+
+    // Get payment amount
     const total = parseInt(document.getElementById('payment-amount').textContent.replace(/,/g, ''));
+    console.log(`Total payment amount: ${total}`);
+
+    // Track latest payment amount for guest users
+    latestPaymentAmount = total;
 
     // Update user stats
     const userData = currentUser === 'guest' ? mockData.guest : mockData.alice;
     userData.totalDonations += total;
     userData.usedDonations += total;
+    console.log(`Updated user stats: totalDonations=${userData.totalDonations}, usedDonations=${userData.usedDonations}`);
     updateUserStats();
 
-    // Close payment modal first
-    closeModal('payment-modal');
-    
-    // Hide the thank-you section and show the completion section
+    // Keep thank-you box visible and show completion section
     const thankYouBox = document.querySelector('.thank-you-box');
     const completeBox = document.getElementById('donation-complete');
-    
+
     if (thankYouBox) {
-        thankYouBox.style.display = 'none';
+        thankYouBox.style.display = 'block';
+        console.log('Thank-you box kept visible');
     }
-    
+
     if (completeBox) {
         completeBox.style.display = 'block';
+        console.log('Completion box displayed');
     }
 
     // Generate mock blockchain data
@@ -478,45 +527,57 @@ function processPayment() {
     document.getElementById('tx-amount').textContent = total.toLocaleString();
     document.getElementById('tx-block').textContent = Math.floor(Math.random() * 1000000);
     document.getElementById('tx-hash').textContent = '0x' + Math.random().toString(16).substr(2, 8) + '...';
+    console.log('Mock blockchain data generated');
 
     // Clear selections for next donation (but don't update visuals to avoid side effects)
     selectedItems = { NEEDS: [], LIVES: [] };
-    
+    console.log('Selected items cleared');
+
     // Update card visuals without triggering auto-scroll
     document.querySelectorAll('.card').forEach(card => {
         card.classList.remove('selected');
     });
+    console.log('Card visuals updated');
 
-    // Scroll to top of donation page to show the completion message
-    const donationPage = document.getElementById('donation-page');
-    if (donationPage) {
-        donationPage.scrollTop = 0;
-    }
-    
-    // Allow navigation again after a delay (10 seconds)
+    // Scroll to bottom of donation page to show the completion message
     setTimeout(() => {
-        isProcessingPayment = false;
-        console.log('Navigation enabled again');
-    }, 10000);
+        const donationPage = document.getElementById('donation-page');
+        if (donationPage) {
+            donationPage.scrollTo({
+                top: donationPage.scrollHeight,
+                behavior: 'smooth'
+            });
+            console.log('Scrolled to bottom of donation page');
+        }
+    }, 300);
+
+    // Allow navigation again after completion
+    isProcessingPayment = false;
+    console.log('isProcessingPayment set to false, navigation enabled');
 }
 
 // Function to complete the donation flow and allow navigation
 function completeDonationFlow() {
+    console.log('completeDonationFlow() started');
     isProcessingPayment = false;
-    // Show the thank-you section and hide the completion section
+    
+    // Hide the completion section and reset the thank-you section for next use
     const thankYouBox = document.querySelector('.thank-you-box');
     const completeBox = document.getElementById('donation-complete');
     
     if (thankYouBox) {
         thankYouBox.style.display = 'block';
+        console.log('Thank-you box reset for next use');
     }
     
     if (completeBox) {
         completeBox.style.display = 'none';
+        console.log('Completion box hidden');
     }
     
-    // Navigate to about page to show donation summary
+    // Navigate to Page 4 (about page) to show donation summary
     showPage('about-page');
+    console.log('Navigated to about page');
 }
 
 // Technology Modal Management
@@ -562,12 +623,15 @@ function updateAboutPageStats() {
     
     const totalDonations = guestData.totalDonations + aliceData.totalDonations;
     const totalUsed = guestData.usedDonations + aliceData.usedDonations;
-    const currentUserUsed = currentUser === 'guest' ? 0 : aliceData.usedDonations;
+    
+    // For guest users, show only the latest payment amount
+    // For logged-in users (Alice), show their total donations
+    const currentUserDonations = currentUser === 'guest' ? latestPaymentAmount : aliceData.totalDonations;
     
     // Update circular visualization
     document.querySelector('.total-box .amount').textContent = `$${totalDonations.toLocaleString()}`;
     document.querySelector('.used-box .amount').textContent = `$${totalUsed.toLocaleString()}`;
-    document.querySelector('.member-box .amount').textContent = `$${currentUserUsed.toLocaleString()}`;
+    document.getElementById('member-donations').textContent = `$${currentUserDonations.toLocaleString()}`;
 }
 
 // Initialize card images using constants
@@ -701,14 +765,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Donor Wallet App initialized successfully!');
 });
 
-// Export for testing (if needed)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        selectLanguage,
-        showPage,
-        toggleSelection,
-        login,
-        logout,
-        processPayment
-    };
-}
+// Global error handler
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error(`Global Error: ${message} at ${source}:${lineno}:${colno}`, error);
+};

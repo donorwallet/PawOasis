@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oasis Donation | 浪浪綠洲捐助</title>
+    <title>Paw Oasis Donation | 浪浪綠洲捐助</title>
     <link rel="stylesheet" href="donorWallet.css">
 </head>
 <body>
@@ -160,18 +160,23 @@
                 </div>
             </div>
 
-            <button class="pay-btn gradient-btn" disabled onclick="openPaymentModal()">
+            <!-- button class="pay-btn gradient-btn" disabled onclick="openPaymentModal()" -->
+            <!-- button class="pay-btn gradient-btn" onclick="openPaymentModal()">
                 <span data-en="Pay by STRIPE" data-zh="使用 STRIPE 付款">使用 STRIPE 付款</span> 💳
-            </button>
+            </button -->
+            <button class="pay-btn gradient-btn" type="button" onclick="openPaymentModal(event)">
+                <span data-en="Pay by STRIPE" data-zh="使用 STRIPE 付款">使用 STRIPE 付款</span> 💳
+            </button>            
 
             <br><br><br>
-            <div class="organization-details">
-                <p><strong data-en="Charity receiving donations" data-zh="接收捐款的慈善團體">慈善團體</strong>: <br>智能化社區教育中心有限公司<br>intelligent Community Education Centre Limited<br>(IR File No. 91/20243)<br></p>
+            <div class="donation-details">
+                <p><strong data-en="Charity receiving donations" data-zh="接收捐款的慈善團體">慈善團體</strong>: <br>智能化社區教育中心有限公司<br>Intelligent Community Education Centre Limited<br>(IR File No. 91/20243)<br></p>
                 <p data-en="Section 88 — Tax Exempted Charitable Institution in Hong Kong" data-zh="香港稅務條例第88條 — 豁免繳稅慈善團體">NGO, Section 88</p>
             </div>
         </section>
 
-        <section class="donation-complete-box" id="donation-complete" style="display: none;">
+        <!-- section class="donation-complete-box" id="donation-complete" style="display: none;" -->
+        <section class="donation-complete-box" id="donation-complete">
             <h2 class="section-title" data-en="Donation Complete" data-zh="捐款完成">捐款完成</h2>
             
             <div class="success-animation">
@@ -185,16 +190,16 @@
                 <p><span data-en="Transaction Hash" data-zh="交易密函">交易密函</span>: <span id="tx-hash"></span></p>
             </div>
 
-            <br><br><br>
-            <div class="organization-details">
-                <p><strong data-en="We use Stripe Checkout for secure payments." data-zh="我們使用 Stripe Checkout 作為支付平台，確保您的交易安全。">- - -
-                </strong>: <br>智能化社區教育中心有限公司<br>intelligent Community Education Centre Limited<br>(IR File No. 91/20243)<br></p>
-                <p data-en="When you enter your credit card details, they are sent directly to Stripe’s secure servers and are not stored or processed on our website. This ensures your card information is completely safe, so you can shop with confidence!" data-zh="當您輸入信用卡資料時，這些資料會直接傳送到 Stripe 的安全伺服器，不會經過或儲存在我們的網站上。因此，您的信用卡資訊絕對安全，讓您可以放心購物！">NGO, Section 88</p>
+            <br><br>
+            <div class="donation-details">
+                <p><strong data-en="We use Stripe Checkout for" data-zh="我們使用 Stripe Checkout 作為支付平台">- - -</strong></p>
+                <p><strong data-en="secure payments." data-zh="確保您的交易安全。">- - -</strong></p>
+                <p data-en="When you enter your credit card details, they are sent directly to Stripe secure servers and are not stored or processed on our website. This ensures your card information is completely safe, so you can shop with confidence!" data-zh="當您輸入信用卡資料時，這些資料會直接傳送到 Stripe 的安全伺服器，不會經過或儲存在我們的網站上。因此，您的信用卡資訊絕對安全，讓您可以放心購物！">- - -</p>
             </div>
 
             <div style="text-align: center; margin-top: 30px;">
-                <button class="gradient-btn" onclick="completeDonationFlow()" style="padding: 15px 40px; font-size: 1.2rem;">
-                    <span data-en="Continue" data-zh="繼續">繼續</span> →
+                <button class="pay-btn gradient-btn" onclick="completeDonationFlow()" style="padding: 15px 40px; font-size: 1.2rem;">
+                    <span data-en="Continue" data-zh="繼續">繼續</span> ⏩
                 </button>
             </div>
         </section>
@@ -222,9 +227,9 @@
                             <span class="amount">$3,898,637</span>
                         </div>
                         <div class="circle-box member-box">
-                            <div class="circle-content">
-                                <p data-en="Your" data-zh="您">您</p>
-                                <span class="amount">$100</span>
+                            <div class="circle-content-small">
+                                <p data-en="Yours" data-zh="您">您</p>
+                                <span class="amount" id="member-donations">$0</span>
                             </div>
                         </div>
                     </div>
@@ -255,10 +260,10 @@
                 <p data-en="Government Registered NGO, Section 88 Tax Exempted Charitable Institution" data-zh="政府註冊NGO, 稅務條例第88條—豁免繳稅慈善團體">NGO, Section 88</p>
             </div>
             <div class="organization-details">
-                <p><strong data-en="Medical Insurance Partner" data-zh="動物醫療保險夥伴">動物醫療保險夥伴</strong>:<br>OneDegress Hong Kong Limited</p>
+                <p><strong data-en="Medical Insurance Partner" data-zh="動物醫療保險夥伴">動物醫療保險夥伴</strong>:<br>OneDegree Hong Kong Limited</p>
             </div>            
             <div class="organization-details">
-                <p><strong data-en="Green Food Partner" data-zh="綠色食品夥伴">綠色食品夥伴</strong>:<br>BSf Innovation Limited</p>
+                <p><strong data-en="Green Food Partner" data-zh="綠色食品夥伴">綠色食品夥伴</strong>:<br>BSF Innovation Limited</p>
             </div>
             <div class="organization-details">
                 <p><strong data-en="Technology Partner" data-zh="科技合作夥伴">科技合作夥伴</strong>:<br>Real Matter Technology Limited</p>
@@ -340,7 +345,7 @@
                     <p><small data-en="Enter your password" data-zh="輸入您的密碼">輸入您的密碼</small></p>
                     <input type="password" id="password" placeholder="Password" value="2345">
                     <button class="login-btn" onclick="login()">
-                        <span data-en="Login" data-zh="登入">登入</span> ⏩
+                        <span data-en="Login" data-zh="登入">登入</span>
                     </button>
                 </div>
                 <div id="member-info" class="member-info hidden">
@@ -355,10 +360,10 @@
                     </div>
                     <div>
                         <button class="logout-btn" onclick="closeModal('settings-modal')">
-                            <span data-en="Completed" data-zh="完成">完成</span> ✅
+                            <span data-en="Completed" data-zh="完成">完成</span>
                         </button>
                         <button class="logout-btn" onclick="logout()">
-                            <span data-en="Logout" data-zh="登出">登出</span> ⏏
+                            <span data-en="Logout" data-zh="登出">登出</span>
                         </button>
                     </div>
                 </div>
@@ -450,25 +455,53 @@
                 <button class="close-btn" onclick="closeModal('payment-modal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form class="payment-form">
-                    <p><small data-en="Enter your credit card number" data-zh="輸入您的信用卡號">輸入您的信用卡號</small></p>
-                    <input type="text" placeholder="Visa Card Number" value="4242 4242 4242 4242">
-                    <p><small data-en="Enter your billing address" data-zh="輸入您的賬單地址">輸入您的賬單地址</small></p>
-                    <input type="text" placeholder="Billing Address" value="123 Main St, Hong Kong">
-                    <p><small data-en="Enter card holder name" data-zh="輸入持卡人姓名">輸入持卡人姓名</small></p>
-                    <input type="text" placeholder="Cardholder Name" value="John Doe">
-                    <p><small data-en="Enter your email address" data-zh="輸入您的電子郵件">輸入您的電子郵件</small></p>
-                    <input type="email" placeholder="Email" value="john@example.com">
+                <form class="payment-form" onsubmit="return false;">
+                    <!-- Shipping Information -->
+                    <div class="form-section">
+                        <h4 data-en="Shipping Information" data-zh="運送資訊">運送資訊</h4>
+                        <label class="input-label" data-en="Email address" data-zh="電郵地址">電郵地址</label>
+                        <input type="email" id="payment-email" placeholder="Email" value="john@example.com" required>
+                        <label class="input-label" data-en="Shipping Address" data-zh="送貨地址">送貨地址</label>
+                        <textarea id="payment-address" placeholder="Shipping Address" rows="3" required>123 Main Street, Central, Hong Kong</textarea>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="form-section">
+                        <h4 data-en="Payment Method" data-zh="付款方式">付款方式</h4>
+                        <label class="input-label" data-en="Card Number" data-zh="卡號">卡號</label>
+                        <input type="text" id="payment-card" placeholder="Card Information" value="4242 4242 4242 4242" required>
+                        <div class="card-details">
+                            <div class="card-detail-item">
+                                <label class="input-label" data-en="Expiry date" data-zh="到期日期">到期日期</label>
+                                <input type="text" id="payment-expiry" placeholder="MM/YY" value="12/25" required>
+                            </div>
+                            <div class="card-detail-item">
+                                <label class="input-label" data-en="Security code" data-zh="安全碼">安全碼</label>
+                                <input type="text" id="payment-cvc" placeholder="CVC" value="123" required>
+                            </div>
+                        </div>
+                        <label class="input-label" data-en="Full name on your card" data-zh="卡上的全名">卡上的全名</label>
+                        <input type="text" id="payment-name" placeholder="Name on Card" value="John Doe" required>
+                    </div>
+
                     <div class="payment-actions">
-                        <button class="pay-btn gradient-btn" onclick="processPayment()">
+                        <button type="button" class="pay-btn gradient-btn" onclick="processPayment()">
                             <span data-en="Pay" data-zh="付款">付款</span> $<span id="payment-amount">0</span>
                         </button>
-                        <button class="cancel-btn" onclick="closeModal('payment-modal')">
+                        <button type="button" class="cancel-btn" onclick="closeModal('payment-modal')">
                             <span data-en="Cancel" data-zh="取消">取消</span>
                         </button>
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+
+    <!-- Status Modal for Connection/Payment -->
+    <div id="status-modal" class="modal status-modal">
+        <div class="status-content">
+            <div class="status-spinner"></div>
+            <p id="status-message" data-en="Connecting to STRIPE..." data-zh="正在連接 STRIPE...">正在連接 STRIPE...</p>
         </div>
     </div>
 
